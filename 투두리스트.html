@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+}
+
+h1 {
+    text-align: center;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+input, button {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+button {
+    background-color: #28a745;
+    color: #fff;
+    cursor: pointer;
+    border: none;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f9f9f9;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+li button {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+li button:hover {
+    background-color: #c82333;
+}
+
+    </style>
+    <script>
+        // To-Do List 관리 배열
+let tasks = [];
+
+// 로컬 스토리지에서 기존 데이터를 불러오기
+window.onload = function() {
+    const storedTasks = localStorage.getItem("tasks");
+    if (storedTasks) {
+        tasks = JSON.parse(storedTasks);
+        renderTasks();
+    }
+}
+
+// 새로운 일정 추가 함수
+function addTask() {
+    const title = document.getElementById('task-title').value;
+    const date = document.getElementById('task-date').value;
+    const time = document.getElementById('task-time').value;
+
+    if (title && date && time) {
+        const task = {
+            id: Date.now(), // 고유 ID 생성
+            title: title,
+            date: date,
+            time: time
+        };
+        tasks.push(task);
+        renderTasks();
+        saveTasks();
+        
+        // 입력 필드 초기화
+        document.getElementById('task-title').value = '';
+        document.getElementById('task-date').value = '';
+        document.getElementById('task-time').value = '';
+    } else {
+        alert("Please fill in all fields.");
+    }
+}
+
+// 일정 삭제 함수
+function deleteTask(id) {
+    tasks = tasks.filter(task => task.id !== id);
+    renderTasks();
+    saveTasks();
+}
+
+// 일정 목록 화면에 렌더링 함수
+function renderTasks() {
+    const taskList = document.getElementById('task-list');
+    taskList.innerHTML = '';
+
+    tasks.forEach(task => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+            <span>${task.title} - ${task.date} ${task.time}</span>
+            <button onclick="deleteTask(${task.id})">Delete</button>
+        `;
+        taskList.appendChild(li);
+    });
+}
+
+// 로컬 스토리지에 데이터 저장 함수
+function saveTasks() {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+}
+
+    </script>
+    <div class="container">
+        <h1>To-Do List</h1>
+        <div class="form">
+            <input type="text" id="task-title" placeholder="일정을 입력하세요">
+            <input type="date" id="task-date">
+            <input type="time" id="task-time">
+            <button onclick="addTask()">일정 추가</button>
+        </div>
+        <ul id="task-list"></ul>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
